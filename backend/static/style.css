@@ -1,0 +1,291 @@
+/* static/style.css — Tracer Warning Page Styles */
+
+/* ─── Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --red:        #e53935;
+  --red-dark:   #b71c1c;
+  --red-glow:   #ff1744;
+  --bg:         #0a0a0a;
+  --bg-card:    #111111;
+  --bg-row:     #1a1a1a;
+  --text:       #f5f5f5;
+  --text-muted: #9e9e9e;
+  --border:     #2a2a2a;
+  --accent:     #ff5252;
+  --green:      #69f0ae;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', Courier, monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 48px;
+  overflow-x: hidden;
+}
+
+/* ─── Pulsing red page border ───────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  border: 4px solid var(--red-glow);
+  pointer-events: none;
+  z-index: 999;
+  animation: borderPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes borderPulse {
+  0%, 100% { opacity: 1; box-shadow: inset 0 0 40px rgba(255,23,68,.35); }
+  50%       { opacity: .4; box-shadow: inset 0 0 10px rgba(255,23,68,.1); }
+}
+
+/* ─── Warning icon ──────────────────────────────────────────── */
+.icon-wrap {
+  margin-top: 32px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-ring {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 4px solid var(--red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: ringPulse 1s ease-in-out infinite;
+  box-shadow: 0 0 32px rgba(229,57,53,.6);
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 32px rgba(229,57,53,.6); }
+  50%       { transform: scale(1.08); box-shadow: 0 0 60px rgba(255,23,68,.9); }
+}
+
+.icon-ring svg {
+  width: 60px;
+  height: 60px;
+  fill: var(--red-glow);
+  animation: iconFlash .8s step-start infinite;
+}
+
+@keyframes iconFlash {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: .2; }
+}
+
+/* ─── Badge: OFFICIAL NOTICE ────────────────────────────────── */
+.badge {
+  margin-top: 20px;
+  background: var(--red-dark);
+  color: #fff;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  padding: 5px 18px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+/* ─── Main headline ─────────────────────────────────────────── */
+h1.headline {
+  margin-top: 18px;
+  font-size: clamp(1.5rem, 5vw, 2.6rem);
+  font-weight: 900;
+  color: var(--red-glow);
+  text-align: center;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-shadow: 0 0 20px rgba(255,23,68,.7);
+  animation: headlineFlash 1.6s ease-in-out infinite;
+}
+
+@keyframes headlineFlash {
+  0%, 100% { text-shadow: 0 0 20px rgba(255,23,68,.7); }
+  50%       { text-shadow: 0 0 60px rgba(255,23,68,1), 0 0 100px rgba(255,23,68,.5); }
+}
+
+/* ─── Sub-headline ──────────────────────────────────────────── */
+.sub {
+  margin-top: 10px;
+  font-size: clamp(.9rem, 2.5vw, 1.1rem);
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 540px;
+  line-height: 1.6;
+}
+
+/* ─── Case ID bar ───────────────────────────────────────────── */
+.case-bar {
+  margin-top: 24px;
+  background: #1b0000;
+  border: 1px solid var(--red-dark);
+  border-radius: 6px;
+  padding: 12px 24px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: .85rem;
+}
+
+.case-bar .label { color: var(--text-muted); }
+.case-bar .value { color: var(--accent); font-weight: 700; letter-spacing: 2px; font-size: 1rem; }
+
+/* ─── Info card ─────────────────────────────────────────────── */
+.card {
+  margin-top: 28px;
+  width: 100%;
+  max-width: 640px;
+  background: var(--bg-card);
+  border: 1px solid var(--red-dark);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(183,28,28,.25);
+}
+
+.card-header {
+  background: var(--red-dark);
+  padding: 10px 20px;
+  font-size: .75rem;
+  letter-spacing: 3px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.info-row {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--bg-row);
+  transition: background .2s;
+}
+
+.info-row:last-child { border-bottom: none; }
+.info-row:hover { background: #1f1f1f; }
+
+.info-row .info-label {
+  min-width: 110px;
+  color: var(--text-muted);
+  font-size: .78rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding-top: 2px;
+}
+
+.info-row .info-value {
+  color: var(--text);
+  font-size: .95rem;
+  word-break: break-all;
+}
+
+.info-value.highlight {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ─── Status bullets ─────────────────────────────────────────── */
+.status-list {
+  margin-top: 28px;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #0d0d0d;
+  border: 1px solid #2a0000;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: .88rem;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+  animation: dotBlink .9s step-start infinite;
+}
+
+@keyframes dotBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.status-item span { line-height: 1.4; }
+
+/* ─── Countdown timer ───────────────────────────────────────── */
+.timer-wrap {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.timer-label {
+  font-size: .72rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.timer-display {
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--red-glow);
+  text-shadow: 0 0 30px rgba(255,23,68,.8);
+  font-variant-numeric: tabular-nums;
+  animation: timerPulse .95s ease-in-out infinite;
+  min-width: 100px;
+  text-align: center;
+}
+
+@keyframes timerPulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+
+.timer-sub {
+  font-size: .78rem;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────── */
+footer {
+  margin-top: 48px;
+  font-size: .68rem;
+  color: #3a3a3a;
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .info-row .info-label { min-width: 85px; font-size: .72rem; }
+  .timer-display { font-size: 3rem; }
+}

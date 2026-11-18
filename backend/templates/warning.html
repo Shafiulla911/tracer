@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚠️ Cyber Crime Warning — Tracer</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <meta name="robots" content="noindex, nofollow" />
+</head>
+<body>
+
+  <!-- ── Warning icon ─────────────────────────────────────────── -->
+  <div class="icon-wrap">
+    <div class="icon-ring">
+      <!-- Shield with exclamation SVG -->
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 1L3 5v6c0 5.25 3.75 10.15 9 11.25
+                 C17.25 21.15 21 16.25 21 11V5L12 1z
+                 M11 7h2v6h-2V7zm0 8h2v2h-2v-2z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── Official notice badge ─────────────────────────────────── -->
+  <div class="badge">🚨 Official Notice — Cyber Crime Cell</div>
+
+  <!-- ── Main headline ─────────────────────────────────────────── -->
+  <h1 class="headline">⚠️ You Have Been Traced</h1>
+
+  <p class="sub">
+    Your fraudulent activity has been <strong>detected, logged,</strong> and
+    <strong>reported</strong> to the Indian Cyber Crime Coordination Centre (I4C)
+    and the National Cyber Crime Reporting Portal.
+  </p>
+
+  <!-- ── Case reference ────────────────────────────────────────── -->
+  <div class="case-bar">
+    <span class="label">CASE&nbsp;ID</span>
+    <span class="value">TRC-{{ case_id }}</span>
+  </div>
+
+  <!-- ── Captured details card ─────────────────────────────────── -->
+  <div class="card">
+    <div class="card-header">📡 Captured Device &amp; Location Data</div>
+
+    <div class="info-row">
+      <span class="info-label">IP Address</span>
+      <span class="info-value highlight">{{ ip_address }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">Country</span>
+      <span class="info-value">{{ country }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">Region</span>
+      <span class="info-value">{{ region }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">City</span>
+      <span class="info-value">{{ city }}</span>
+    </div>
+
+    {% if latitude and longitude %}
+    <div class="info-row">
+      <span class="info-label">Coordinates</span>
+      <span class="info-value">{{ "%.4f"|format(latitude) }}, {{ "%.4f"|format(longitude) }}</span>
+    </div>
+    {% endif %}
+
+    <div class="info-row">
+      <span class="info-label">ISP</span>
+      <span class="info-value">{{ isp }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">Device</span>
+      <span class="info-value">{{ device_type }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">Browser</span>
+      <span class="info-value">{{ browser }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">OS</span>
+      <span class="info-value">{{ os }}</span>
+    </div>
+  </div>
+
+  <!-- ── Status list ───────────────────────────────────────────── -->
+  <div class="status-list">
+    <div class="status-item">
+      <div class="status-dot"></div>
+      <span>Your <strong>IP address</strong> and approximate <strong>location</strong> have been permanently logged.</span>
+    </div>
+    <div class="status-item">
+      <div class="status-dot"></div>
+      <span>This report has been <strong>forwarded to the Cyber Crime Cell</strong> and relevant law enforcement.</span>
+    </div>
+    <div class="status-item">
+      <div class="status-dot"></div>
+      <span>Your <strong>device fingerprint</strong> has been captured and added to the national fraud registry.</span>
+    </div>
+    <div class="status-item">
+      <div class="status-dot"></div>
+      <span><strong>Legal action</strong> under the Information Technology Act, 2000 (Sections 66C &amp; 66D) may be initiated against you.</span>
+    </div>
+    <div class="status-item">
+      <div class="status-dot"></div>
+      <span>The victim has been <strong>automatically notified</strong> that you accessed this link.</span>
+    </div>
+  </div>
+
+  <!-- ── Countdown timer ──────────────────────────────────────── -->
+  <div class="timer-wrap">
+    <span class="timer-label">Transmitting report in</span>
+    <div class="timer-display" id="countdown">10</div>
+    <p class="timer-sub">
+      Closing this page will not stop the reporting process.
+      All data has already been captured and transmitted.
+    </p>
+  </div>
+
+  <!-- ── Footer ───────────────────────────────────────────────── -->
+  <footer>
+    Tracer Platform &mdash; Powered by Indian Cyber Crime Reporting Network &mdash; Case Ref: TRC-{{ case_id }}
+  </footer>
+
+  <!-- ── Countdown JavaScript ─────────────────────────────────── -->
+  <script>
+    (function () {
+      const el = document.getElementById('countdown');
+      let count = 10;
+
+      const interval = setInterval(function () {
+        count--;
+        if (count <= 0) {
+          el.textContent = '0';
+          el.style.color = '#ff1744';
+          clearInterval(interval);
+          // After reaching 0, show "REPORTED" text
+          setTimeout(function () {
+            el.textContent = '✓';
+            el.style.fontSize = '3rem';
+            el.style.color = '#69f0ae';
+            el.style.textShadow = '0 0 30px rgba(105,240,174,0.8)';
+            document.querySelector('.timer-label').textContent = 'Report Transmitted';
+          }, 500);
+        } else {
+          el.textContent = count;
+          // Flash red when below 5
+          if (count < 5) {
+            el.style.color = count % 2 === 0 ? '#ff1744' : '#ff5252';
+          }
+        }
+      }, 1000);
+    })();
+  </script>
+
+</body>
+</html>

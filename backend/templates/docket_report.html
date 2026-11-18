@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYBER CRIME EVIDENCE DOCKET — CASE #{{ case_id }}</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
+    body { background: #fdfdfd; color: #111; padding: 30px; font-size: 13px; line-height: 1.5; }
+    .header { border-bottom: 3px double #111; padding-bottom: 15px; margin-bottom: 20px; text-align: center; }
+    .title { font-size: 20px; font-weight: bold; letter-spacing: 2px; }
+    .sub { font-size: 11px; text-transform: uppercase; margin-top: 4px; color: #444; }
+    .meta-box { border: 1px solid #111; padding: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; background: #fafafa; }
+    .section-title { font-size: 14px; font-weight: bold; background: #111; color: #fff; padding: 4px 8px; margin: 20px 0 10px; text-transform: uppercase; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+    th, td { border: 1px solid #999; padding: 8px 10px; text-align: left; font-size: 12px; }
+    th { background: #eee; font-weight: bold; }
+    .badge-danger { color: #b91c1c; font-weight: bold; }
+    .footer { margin-top: 40px; border-top: 1px dashed #666; padding-top: 15px; font-size: 11px; color: #555; text-align: center; }
+    .btn-print { background: #111; color: #fff; padding: 10px 16px; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; margin-bottom: 20px; }
+    @media print { .btn-print { display: none; } }
+  </style>
+</head>
+<body>
+
+  <button class="btn-print" onclick="window.print()">🖨️ PRINT / SAVE AS OFFICIAL PDF</button>
+
+  <div class="header">
+    <div class="title">CYBER FRAUD EVIDENCE &amp; TRACE REPORT</div>
+    <div class="sub">National Cyber Crime Reporting Format (Rule 3(1) IT Act 2000)</div>
+  </div>
+
+  <div class="meta-box">
+    <div><strong>CASE FILE:</strong> TRC-{{ scammer.id }}-{{ case_id }}</div>
+    <div><strong>GENERATED ON:</strong> {{ cur_time }}</div>
+    <div><strong>STATUS:</strong> <span class="badge-danger">FLAGGED &amp; ACTIVE</span></div>
+  </div>
+
+  <div class="section-title">1. Suspect / Fraudster Identifiers</div>
+  <table>
+    <tr><th width="30%">Target Phone Number</th><td>{{ scammer.phone_number or "N/A" }}</td></tr>
+    <tr><th>Target UPI ID</th><td>{{ scammer.upi_id or "N/A" }}</td></tr>
+    <tr><th>Known Alias / Name</th><td>{{ scammer.name or "Unknown Scammer" }}</td></tr>
+    <tr><th>Total Independent Reports</th><td><strong>{{ scammer.reported_count }}</strong> filed across victims</td></tr>
+    <tr><th>Threat Classification</th><td><span class="badge-danger">HIGH RISK / SERIAL FRAUDULENT ACTOR</span></td></tr>
+  </table>
+
+  <div class="section-title">2. Victim Complaint Logs &amp; Loss Details</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Victim Name</th>
+        <th>Amount Lost</th>
+        <th>Payment Mode</th>
+        <th>UTR / Ref Number</th>
+        <th>Category</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in scammer.reports %}
+      <tr>
+        <td>{{ r.victim_name }}</td>
+        <td><strong>₹{{ "%.2f"|format(r.amount_lost) if r.amount_lost else "0.00" }}</strong></td>
+        <td>{{ r.payment_method or "UPI" }}</td>
+        <td>{{ r.utr_number or "Pending" }}</td>
+        <td>{{ r.scam_category or "Cyber Fraud" }}</td>
+        <td>{{ r.description }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" style="text-align: center;">No specific victim monetary logs filed yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="section-title">3. Forensic Geolocation &amp; IP Click Captures (Trap Evidence)</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Captured IP Address</th>
+        <th>Approx. Location</th>
+        <th>Coordinates</th>
+        <th>ISP / Carrier</th>
+        <th>Device &amp; OS</th>
+        <th>Timestamp (UTC)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in track_logs %}
+      <tr>
+        <td><strong>{{ l.ip_address }}</strong></td>
+        <td>{{ l.city }}, {{ l.region }}, {{ l.country }}</td>
+        <td>{{ "%.4f"|format(l.latitude) if l.latitude else "-" }}, {{ "%.4f"|format(l.longitude) if l.longitude else "-" }}</td>
+        <td>{{ l.isp or "Unknown" }}</td>
+        <td>{{ l.device_type }} ({{ l.os }})</td>
+        <td>{{ l.clicked_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" style="text-align: center;">Trap links currently pending target interaction.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <p>This automated docket contains non-repudiable server logs recorded by the TRACER forensic tracking platform.</p>
+    <p>Admissible under Section 65B of the Indian Evidence Act for cyber crime investigation and FIR registration.</p>
+  </div>
+
+</body>
+</html>
+
