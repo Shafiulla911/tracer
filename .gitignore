@@ -31,3 +31,4 @@ backend/tracer.db
 .DS_Store
 Thumbs.db
 **/.idea/
+.vscode/
