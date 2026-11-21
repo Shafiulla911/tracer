@@ -205,3 +205,17 @@ async def update_profile(
     await db.commit()
     await db.refresh(user)
     return await _enrich_user_stats(user, db)
+
+
+# ---------------------------------------------------------------------------
+# DELETE /api/auth/me
+# ---------------------------------------------------------------------------
+
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_account(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Permanently delete the authenticated user account."""
+    await db.delete(user)
+    await db.commit()

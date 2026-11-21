@@ -93,15 +93,25 @@ class AuthService extends ChangeNotifier {
         throw err['detail'] ?? 'Registration failed with status ${res.statusCode}';
       }
     } catch (e) {
-      // Offline fallback: if network fails during development/demo, create offline investigator session
-      if (e is! String && (e.toString().contains('Failed host lookup') || e.toString().contains('Connection refused') || e.toString().contains('SocketException') || e.toString().contains('TimeoutException'))) {
+      // Offline fallback: covers all network errors (SocketException, ClientException on web, TimeoutException, etc.)
+      final err = e.toString();
+      if (e is! String && (
+        err.contains('Failed host lookup') ||
+        err.contains('Connection refused') ||
+        err.contains('SocketException') ||
+        err.contains('TimeoutException') ||
+        err.contains('ClientException') ||
+        err.contains('Failed to fetch') ||
+        err.contains('NetworkException') ||
+        err.contains('XMLHttpRequest')
+      )) {
         final offlineUser = User(
           id: DateTime.now().millisecondsSinceEpoch % 10000,
           fullName: fullName.trim(),
           email: email.trim().toLowerCase(),
           phone: phone,
           badge: 'Field Investigator • Level 1',
-          role: 'Agent (Offline Mesh)',
+          role: 'Agent (Offline)',
           createdAt: DateTime.now(),
         );
         final offlineToken = 'offline_token_${DateTime.now().millisecondsSinceEpoch}';
@@ -110,6 +120,27 @@ class AuthService extends ChangeNotifier {
       }
       rethrow;
     }
+  }
+
+  Future<void> deleteAccount() async {
+    // Clear local session regardless of backend reachability
+    _token = null;
+    _currentUser = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tokenKey);
+    await prefs.remove(_userKey);
+    // If token existed, try to delete on server (best-effort)
+    if (_token != null) {
+      try {
+        await http
+            .delete(Uri.parse('${AppConstants.authEndpoint}/me'),
+                headers: _headers)
+            .timeout(const Duration(seconds: 5));
+      } catch (_) {
+        // Silently ignore — local session already cleared
+      }
+    }
+    notifyListeners();
   }
 
   Future<User> login({
@@ -139,8 +170,18 @@ class AuthService extends ChangeNotifier {
         throw err['detail'] ?? 'Invalid credentials';
       }
     } catch (e) {
-      // Offline fallback: if backend is unreachable, allow logging in with cached credentials or offline agent mode
-      if (e is! String && (e.toString().contains('Failed host lookup') || e.toString().contains('Connection refused') || e.toString().contains('SocketException') || e.toString().contains('TimeoutException'))) {
+      // Offline fallback: covers all network errors (SocketException, ClientException on web, TimeoutException, etc.)
+      final err = e.toString();
+      if (e is! String && (
+        err.contains('Failed host lookup') ||
+        err.contains('Connection refused') ||
+        err.contains('SocketException') ||
+        err.contains('TimeoutException') ||
+        err.contains('ClientException') ||
+        err.contains('Failed to fetch') ||
+        err.contains('NetworkException') ||
+        err.contains('XMLHttpRequest')
+      )) {
         if (_currentUser != null && _currentUser!.email.toLowerCase() == email.trim().toLowerCase()) {
           return _currentUser!;
         }
