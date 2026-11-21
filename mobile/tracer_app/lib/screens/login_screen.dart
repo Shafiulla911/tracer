@@ -538,6 +538,52 @@ class _LoginScreenState extends State<LoginScreen>
             onTap: _loading ? null : _handleLogin,
             loading: _loading,
           ),
+          const SizedBox(height: 14),
+
+          // Quick Demo Credentials Chip
+          Center(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () {
+                setState(() {
+                  _emailCtrl.text = 'agent@tracer.org';
+                  _passwordCtrl.text = 'Password@123';
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Demo credentials loaded: agent@tracer.org'),
+                    duration: Duration(seconds: 2),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppConstants.accent.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: AppConstants.accent.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.flash_on_rounded, color: AppConstants.accent, size: 14),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Use Default Agent Credentials',
+                      style: TextStyle(
+                        color: AppConstants.accent,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
