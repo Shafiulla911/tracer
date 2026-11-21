@@ -192,3 +192,49 @@ class StatsOut(BaseModel):
     total_scammers: int
     total_reports: int
     total_traced: int  # number of trap links that have been clicked at least once
+
+
+# ---------------------------------------------------------------------------
+# Auth & User schemas
+# ---------------------------------------------------------------------------
+
+class UserCreate(BaseModel):
+    full_name: str = Field(..., max_length=100, example="Alex Mercer")
+    email: str = Field(..., max_length=120, example="agent.alex@sentinel.org")
+    phone: Optional[str] = Field(None, max_length=20, example="+919876543210")
+    password: str = Field(..., min_length=6, example="SentinelPass@123")
+
+
+class UserLogin(BaseModel):
+    email: str = Field(..., example="agent.alex@sentinel.org")
+    password: str = Field(..., example="SentinelPass@123")
+
+
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    badge: Optional[str] = None
+
+
+class UserOut(BaseModel):
+    id: int
+    full_name: str
+    email: str
+    phone: Optional[str] = None
+    badge: str
+    role: str
+    avatar_url: Optional[str] = None
+    created_at: datetime
+    reports_count: int = 0
+    traps_count: int = 0
+    hits_count: int = 0
+
+    class Config:
+        from_attributes = True
+
+
+class AuthResponse(BaseModel):
+    token: str
+    user: UserOut
+    message: str = "Authenticated successfully"
+

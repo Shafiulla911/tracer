@@ -13,6 +13,8 @@ import 'search_screen.dart';
 import 'my_reports_screen.dart';
 import 'scammer_detail_screen.dart';
 import 'trap_link_screen.dart';
+import 'profile_screen.dart';
+import '../services/auth_service.dart';
 
 // ─── CyberStatusIndicator (shared widget used here) ────────────────────────
 class CyberStatusIndicator extends StatefulWidget {
@@ -111,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
     SearchScreen(),
     ReportScreen(),
     MyReportsScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -318,6 +321,41 @@ class _HomePageState extends State<_HomePage> {
                             ),
                             child: const Icon(Icons.refresh_rounded,
                                 color: AppConstants.textSecondary, size: 16),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () {
+                            final state =
+                                context.findAncestorStateOfType<_HomeScreenState>();
+                            state?.setState(() => state._currentIndex = 4);
+                          },
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppConstants.accent.withValues(alpha: 0.25),
+                                  const Color(0xFF0D253E),
+                                ],
+                              ),
+                              border: Border.all(
+                                color: AppConstants.accent.withValues(alpha: 0.6),
+                                width: 1.2,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                AuthService().currentUser?.initials ?? 'AG',
+                                style: const TextStyle(
+                                  color: AppConstants.accent,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],

@@ -18,7 +18,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from contextlib import asynccontextmanager
 
 from database import create_tables, get_db
-from models import Report, Scammer, TrapLink
+from models import Report, Scammer, TrapLink, User
+from routes import auth as auth_router
 from routes import reports as reports_router
 from routes import search as search_router
 from routes import tracking as tracking_router
@@ -75,6 +76,7 @@ app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 # Include routers
 # ---------------------------------------------------------------------------
 
+app.include_router(auth_router.router)
 app.include_router(reports_router.router)
 app.include_router(search_router.router)
 app.include_router(tracking_router.router)

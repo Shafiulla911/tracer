@@ -20,10 +20,35 @@ from sqlalchemy.orm import relationship
 from database import Base
 
 
+class User(Base):
+    """
+    Represents an authorized Tracer / Sentinel agent or citizen user.
+    """
+
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    full_name = Column(String(100), nullable=False)
+    email = Column(String(120), unique=True, nullable=False, index=True)
+    phone = Column(String(20), nullable=True)
+    password_hash = Column(String(256), nullable=False)
+    salt = Column(String(64), nullable=False)
+    token = Column(String(128), unique=True, nullable=True, index=True)
+    badge = Column(String(60), default="Field Investigator", nullable=False)
+    role = Column(String(40), default="Agent", nullable=False)
+    avatar_url = Column(String(255), nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    last_login = Column(DateTime, nullable=True)
+
+    # Relationships
+    reports = relationship("Report", back_populates="user", lazy="selectin")
+
+
 class Scammer(Base):
     """
-    Represents a scammer entity.  A scammer can be identified by phone number
-    and/or UPI ID.  Multiple victims can file reports against the same scammer.
+    Represents a scammer entity. A scammer can be identified by phone number
+    and/or UPI ID. Multiple victims can file reports against the same scammer.
     """
 
     __tablename__ = "scammers"
@@ -55,6 +80,9 @@ class Report(Base):
     __tablename__ = "reports"
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
     scammer_id = Column(
         Integer, ForeignKey("scammers.id", ondelete="CASCADE"), nullable=False
     )
@@ -67,8 +95,9 @@ class Report(Base):
     description = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
-    # Relationship back to parent scammer
+    # Relationship back to parent scammer and user
     scammer = relationship("Scammer", back_populates="reports")
+    user = relationship("User", back_populates="reports")
 
 
 class TrapLink(Base):
@@ -85,7 +114,7 @@ class TrapLink(Base):
     scammer_id = Column(
         Integer, ForeignKey("scammers.id", ondelete="CASCADE"), nullable=False
     )
-    template_type = Column(String(50), default="warning", nullable=False)  # warning, payment_receipt, courier_tracking
+    template_type = Column(String(50), default="warning", nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     is_clicked = Column(Boolean, default=False, nullable=False)
 

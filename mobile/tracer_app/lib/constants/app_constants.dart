@@ -19,6 +19,10 @@ class AppConstants {
   static String get statsEndpoint => '$apiBase/stats';
   static String get analyzeEndpoint => '$apiBase/reports/analyze';
   static String get quickTrapEndpoint => '$apiBase/links/quick';
+  static String get authEndpoint => '$apiBase/auth';
+  static String get loginEndpoint => '$authEndpoint/login';
+  static String get registerEndpoint => '$authEndpoint/register';
+  static String get profileEndpoint => '$authEndpoint/me';
 
   // ─── App Info ──────────────────────────────────────────────────────────────
   static const String appName = 'TRACER';

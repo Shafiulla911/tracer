@@ -13,10 +13,11 @@ class FloatingNavBar extends StatelessWidget {
   });
 
   static const _items = [
-    _NavItem(icon: Icons.home_outlined,       activeIcon: Icons.home_rounded,          label: 'Home'),
-    _NavItem(icon: Icons.search_outlined,     activeIcon: Icons.search_rounded,        label: 'Search'),
-    _NavItem(icon: Icons.report_gmailerrorred_outlined, activeIcon: Icons.report_rounded, label: 'Report'),
-    _NavItem(icon: Icons.list_alt_outlined,   activeIcon: Icons.list_alt_rounded,      label: 'My Cases'),
+    _NavItem(icon: Icons.home_outlined,                 activeIcon: Icons.home_rounded,            label: 'Home'),
+    _NavItem(icon: Icons.search_outlined,               activeIcon: Icons.search_rounded,          label: 'Search'),
+    _NavItem(icon: Icons.report_gmailerrorred_outlined, activeIcon: Icons.report_rounded,          label: 'Report'),
+    _NavItem(icon: Icons.list_alt_outlined,             activeIcon: Icons.list_alt_rounded,        label: 'My Cases'),
+    _NavItem(icon: Icons.person_outline_rounded,        activeIcon: Icons.person_rounded,          label: 'Profile'),
   ];
 
   @override
@@ -128,7 +129,7 @@ class _NavTileState extends State<_NavTile> with SingleTickerProviderStateMixin 
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOut,
-        width: sel ? 76 : 52,
+        width: sel ? 66 : 46,
         height: 68,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
