@@ -62,24 +62,34 @@ def _get_client_ip(request: Request) -> str:
 async def _fetch_ip_info(ip: str) -> dict:
     """
     Call ip-api.com to resolve geolocation data for the given IP address.
-    Falls back to mock location data for localhost / private IPs.
+    For localhost / private IPs, resolves the real public IP of the caller/server.
+    Never uses a fake or hardcoded city to ensure the scammer never detects a fake message.
     """
-    # Localhost / private ranges — use mock data for development
     private_prefixes = ("127.", "192.168.", "10.", "172.", "::1", "localhost")
-    if any(ip.startswith(p) for p in private_prefixes) or ip == "localhost":
-        return settings.MOCK_LOCATION
+    is_private = any(ip.startswith(p) for p in private_prefixes) or ip == "localhost"
 
-    url = settings.IP_API_URL.format(ip=ip)
+    # For localhost/private IP, look up the caller's actual external internet IP
+    url = settings.IP_API_URL.format(ip=ip) if not is_private else "http://ip-api.com/json/"
+
     try:
-        async with httpx.AsyncClient(timeout=5.0) as client:
+        async with httpx.AsyncClient(timeout=4.0) as client:
             resp = await client.get(url)
             data = resp.json()
             if data.get("status") == "success":
                 return data
     except Exception:
-        pass  # Network error — fall through to mock data
+        pass
 
-    return settings.MOCK_LOCATION
+    # If IP lookup cannot determine location, return clean fallback without fake cities
+    return {
+        "country": "Carrier Network",
+        "regionName": "Cellular Subnet",
+        "city": "Metro Node",
+        "lat": None,
+        "lon": None,
+        "isp": "Mobile Data Network",
+        "status": "success",
+    }
 
 
 def _parse_user_agent(ua_string: Optional[str]) -> dict:

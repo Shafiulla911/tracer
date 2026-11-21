@@ -48,20 +48,26 @@
       <span class="info-value highlight">{{ ip_address }}</span>
     </div>
 
+    {% if country and country != 'Unknown' %}
     <div class="info-row">
       <span class="info-label">Country</span>
       <span class="info-value">{{ country }}</span>
     </div>
+    {% endif %}
 
+    {% if region and region != 'Unknown' %}
     <div class="info-row">
       <span class="info-label">Region</span>
       <span class="info-value">{{ region }}</span>
     </div>
+    {% endif %}
 
+    {% if city and city != 'Unknown' %}
     <div class="info-row">
       <span class="info-label">City</span>
       <span class="info-value">{{ city }}</span>
     </div>
+    {% endif %}
 
     {% if latitude and longitude %}
     <div class="info-row">
